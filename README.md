@@ -12,7 +12,7 @@ Ce projet est un petit serveur HTTP en Rust qui écoute sur un port configurable
 Clonez le dépôt et naviguez dans le répertoire du projet :
 
 ```sh
-git clone <URL_DU_DEPOT>
+git clone git@github.com:Forantis/rust-ping-project.git
 cd ping-project
 ```
 
