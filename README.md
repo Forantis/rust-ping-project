@@ -13,7 +13,7 @@ Clonez le dépôt et naviguez dans le répertoire du projet :
 
 ```sh
 git clone git@github.com:Forantis/rust-ping-project.git
-cd ping-project
+cd rust-ping-project
 ```
 
 ## Configuration et lancement
