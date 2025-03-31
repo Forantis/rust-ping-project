@@ -1,0 +1,51 @@
+# ------------------
+# Stage de build
+# ------------------
+
+FROM rust:slim AS builder
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY Cargo.toml Cargo.lock* ./
+
+RUN mkdir src && \
+    echo "fn main() {println!(\"Hello, world!\");}" > src/main.rs && \
+    cargo build --release && \
+    rm -rf src
+
+COPY src src/
+
+RUN sed -i 's/127.0.0.1/0.0.0.0/g' src/main.rs
+
+RUN cargo build --release
+
+# ------------------
+# Stage d'exécution
+# ------------------
+
+FROM debian:bookworm-slim AS runtime
+
+WORKDIR /app
+
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app/target/release/ping-project /app/ping-project
+
+ENV PING_LISTEN_PORT=7878
+
+EXPOSE 7878
+
+RUN chown appuser:appuser /app/ping-project
+
+USER appuser
+
+CMD ["./ping-project"]
